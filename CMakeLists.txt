@@ -21,6 +21,7 @@ add_library(gary_core STATIC
   src/core/version.cpp
   src/core/info_theory.cpp
   src/core/signaling.cpp
+  src/core/population_cpu.cpp
 )
 target_include_directories(gary_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_features(gary_core PUBLIC cxx_std_17)
@@ -29,9 +30,11 @@ target_compile_features(gary_core PUBLIC cxx_std_17)
 if(GARY_BUILD_CUDA)
   enable_language(CUDA)
   find_package(CUDAToolkit REQUIRED)
-  # sm_120 = Blackwell (RTX 50xx). Backend sources are added as the scale tiers land.
-  set(CMAKE_CUDA_ARCHITECTURES 120)
+  # sm_120 = Blackwell (RTX 50xx). Set on the target (it already exists above).
+  target_sources(gary_core PRIVATE src/cuda/population_cuda.cu)
+  set_target_properties(gary_core PROPERTIES CUDA_ARCHITECTURES 120)
   target_compile_definitions(gary_core PUBLIC GARY_WITH_CUDA=1)
+  target_link_libraries(gary_core PUBLIC CUDA::cudart CUDA::curand)
   message(STATUS "GARY: CUDA backend ENABLED (sm_120 / Blackwell)")
 else()
   message(STATUS "GARY: CUDA backend disabled — portable CPU core (Raspberry-capable)")
@@ -40,6 +43,9 @@ endif()
 # ── Seed app (Phase 0 entry point) ───────────────────────────────────────────
 add_executable(gary_seed apps/gary_seed.cpp)
 target_link_libraries(gary_seed PRIVATE gary_core)
+
+add_executable(gary_population apps/gary_population.cpp)
+target_link_libraries(gary_population PRIVATE gary_core)
 
 # ── Tests (optional) ─────────────────────────────────────────────────────────
 if(GARY_BUILD_TESTS)

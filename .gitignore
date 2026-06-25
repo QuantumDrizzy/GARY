@@ -8,7 +8,7 @@ venv/
 .ipynb_checkpoints/
 
 # CUDA / C++ build
-build/
+build*/
 *.o
 *.obj
 *.so
