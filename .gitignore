@@ -9,6 +9,9 @@ venv/
 
 # CUDA / C++ build
 build*/
+
+# Rust
+target/
 *.o
 *.obj
 *.so

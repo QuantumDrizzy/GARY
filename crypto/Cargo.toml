@@ -1,0 +1,8 @@
+[package]
+name = "gary-crypto"
+version = "0.1.0"
+edition = "2021"
+description = "GARY Phase 5 - the recoverability boundary (decypher total). Research models, not production crypto."
+
+[profile.release]
+opt-level = 3
