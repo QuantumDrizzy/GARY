@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# CUDA / C++ build
+build/
+*.o
+*.obj
+*.so
+*.exe
+*.lib
+
+# Data & artifacts stay LOCAL (engineering honesty: publish code, keep experiments local)
+data/
+runs/
+*.npz
+*.npy
+*.parquet
+*.csv
+*.png
+*.mp4
+checkpoints/
+*.pt
+*.safetensors
