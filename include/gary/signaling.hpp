@@ -16,9 +16,13 @@ namespace gary {
 //   Payoff:   success iff action == state.   Actions = states.
 // Learning is Roth-Erev reinforcement (Polya urn): used (state,signal) and
 // (signal,action) pairs are reinforced on success. A "signaling system" emerges.
+//
+// Optional `forgetting` (Barrett & Zollman 2009): every round all weights decay by
+// (1 - forgetting). This stops early lock-ins and helps the system escape partial
+// pooling equilibria toward a perfect code. 0 = classic Roth-Erev.
 class SignalingGame {
  public:
-  SignalingGame(int n_states, int n_signals, std::uint64_t seed);
+  SignalingGame(int n_states, int n_signals, std::uint64_t seed, double forgetting = 0.0);
 
   // Play one round; returns true on success (action == state).
   bool step();
@@ -46,6 +50,7 @@ class SignalingGame {
   std::vector<double> sender_w_;    // [n_states  * n_signals] reinforcement weights
   std::vector<double> receiver_w_;  // [n_signals * n_acts]
   std::mt19937_64 rng_;
+  double forgetting_;  // Roth-Erev forgetting rate (0 = none). Helps escape pooling.
 };
 
 }  // namespace gary

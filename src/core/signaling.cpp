@@ -4,13 +4,14 @@
 
 namespace gary {
 
-SignalingGame::SignalingGame(int n_states, int n_signals, std::uint64_t seed)
+SignalingGame::SignalingGame(int n_states, int n_signals, std::uint64_t seed, double forgetting)
     : n_states_(n_states),
       n_signals_(n_signals),
       n_acts_(n_states),
       sender_w_(static_cast<size_t>(n_states) * n_signals, 1.0),
       receiver_w_(static_cast<size_t>(n_signals) * n_states, 1.0),
-      rng_(seed) {}
+      rng_(seed),
+      forgetting_(forgetting) {}
 
 // Sample an index in [0, n) proportional to the weights w[0..n).
 static int sample_weighted(const double* w, int n, std::mt19937_64& rng) {
@@ -40,7 +41,13 @@ bool SignalingGame::step() {
   const int s = sender_signal(t);
   const int a = receiver_action(s);
   const bool success = (a == t);
-  if (success) {  // Roth-Erev reinforcement
+
+  if (forgetting_ > 0.0) {  // Roth-Erev with forgetting (Barrett & Zollman 2009)
+    const double keep = 1.0 - forgetting_;
+    for (double& w : sender_w_) w *= keep;
+    for (double& w : receiver_w_) w *= keep;
+  }
+  if (success) {  // reinforcement
     sender_w_[static_cast<size_t>(t) * n_signals_ + s] += 1.0;
     receiver_w_[static_cast<size_t>(s) * n_acts_ + a] += 1.0;
   }
