@@ -98,6 +98,19 @@ int main() {
     CHECK(q.quantum_win > 0.83, "CHSH quantum (entangled) beats the classical bound");
   }
 
+  // Quantum mutual information: Bell = 2 bits (double the classical max), product = 0 (null).
+  {
+    double bell[16] = {0};
+    bell[0] = 0.5; bell[3] = 0.5; bell[12] = 0.5; bell[15] = 0.5;
+    double prod[16] = {0};
+    prod[0] = 0.25; prod[5] = 0.25; prod[10] = 0.25; prod[15] = 0.25;
+    const QmiResult qb = quantum_mutual_information(bell);
+    const QmiResult qp = quantum_mutual_information(prod);
+    std::printf("   [QMI] Bell = %.3f bits, product = %.3f bits\n", qb.qmi, qp.qmi);
+    CHECK(std::fabs(qb.qmi - 2.0) < 1e-3, "QMI(Bell) = 2 bits (double the classical max)");
+    CHECK(std::fabs(qp.qmi - 0.0) < 1e-3, "QMI(product) = 0 (the null)");
+  }
+
   if (g_fail)
     std::printf("\n%d test(s) FAILED\n", g_fail);
   else

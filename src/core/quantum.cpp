@@ -4,6 +4,7 @@
 #include <cmath>
 #include <complex>
 #include <random>
+#include <vector>
 
 namespace gary {
 namespace {
@@ -66,6 +67,72 @@ ChshResult chsh_game(int shots, std::uint64_t seed) {
   const double c = std::cos(kPi / 8.0);
   res.tsirelson = c * c;
   return res;
+}
+
+// ── Quantum information: von Neumann entropy + quantum mutual information ──────
+namespace {
+
+// Eigenvalues of an n x n real-symmetric matrix (row-major) via cyclic Jacobi rotations.
+std::vector<double> jacobi_eigenvalues(std::vector<double> a, int n) {
+  for (int sweep = 0; sweep < 100; ++sweep) {
+    double off = 0.0;
+    for (int p = 0; p < n; ++p)
+      for (int q = p + 1; q < n; ++q) off += a[p * n + q] * a[p * n + q];
+    if (off < 1e-28) break;
+    for (int p = 0; p < n; ++p)
+      for (int q = p + 1; q < n; ++q) {
+        const double apq = a[p * n + q];
+        if (std::fabs(apq) < 1e-300) continue;
+        const double phi = 0.5 * std::atan2(2.0 * apq, a[q * n + q] - a[p * n + p]);
+        const double c = std::cos(phi), s = std::sin(phi);
+        for (int i = 0; i < n; ++i) {  // columns p,q
+          const double aip = a[i * n + p], aiq = a[i * n + q];
+          a[i * n + p] = c * aip - s * aiq;
+          a[i * n + q] = s * aip + c * aiq;
+        }
+        for (int i = 0; i < n; ++i) {  // rows p,q
+          const double api = a[p * n + i], aqi = a[q * n + i];
+          a[p * n + i] = c * api - s * aqi;
+          a[q * n + i] = s * api + c * aqi;
+        }
+      }
+  }
+  std::vector<double> eig(n);
+  for (int i = 0; i < n; ++i) eig[i] = a[i * n + i];
+  return eig;
+}
+
+double von_neumann_entropy_bits(const std::vector<double>& eig) {
+  double h = 0.0;
+  for (double l : eig)
+    if (l > 1e-12) h -= l * std::log2(l);
+  return h;
+}
+
+}  // namespace
+
+QmiResult quantum_mutual_information(const double rho[16]) {
+  // Reduced density matrices for 2 qubits, index = 2*A + B.
+  double rhoA[4] = {0, 0, 0, 0}, rhoB[4] = {0, 0, 0, 0};
+  for (int a = 0; a < 2; ++a)
+    for (int ap = 0; ap < 2; ++ap) {
+      double s = 0.0;
+      for (int b = 0; b < 2; ++b) s += rho[(2 * a + b) * 4 + (2 * ap + b)];
+      rhoA[a * 2 + ap] = s;
+    }
+  for (int b = 0; b < 2; ++b)
+    for (int bp = 0; bp < 2; ++bp) {
+      double s = 0.0;
+      for (int a = 0; a < 2; ++a) s += rho[(2 * a + b) * 4 + (2 * a + bp)];
+      rhoB[b * 2 + bp] = s;
+    }
+
+  QmiResult r;
+  r.s_joint = von_neumann_entropy_bits(jacobi_eigenvalues(std::vector<double>(rho, rho + 16), 4));
+  r.s_a = von_neumann_entropy_bits(jacobi_eigenvalues(std::vector<double>(rhoA, rhoA + 4), 2));
+  r.s_b = von_neumann_entropy_bits(jacobi_eigenvalues(std::vector<double>(rhoB, rhoB + 4), 2));
+  r.qmi = r.s_a + r.s_b - r.s_joint;
+  return r;
 }
 
 }  // namespace gary

@@ -20,4 +20,17 @@ struct ChshResult {
 // classical shared code can match.
 ChshResult chsh_game(int shots, std::uint64_t seed);
 
+struct QmiResult {
+  double s_joint;  // S(rho_AB) von Neumann entropy, bits
+  double s_a;      // S(rho_A)
+  double s_b;      // S(rho_B)
+  double qmi;      // I(A:B) = S(A) + S(B) - S(AB)
+};
+
+// Quantum mutual information I(A:B), in bits, of a 2-qubit (4x4, row-major, real-symmetric)
+// density matrix. A maximally entangled Bell state gives QMI = 2 bits -- double the classical
+// maximum (1 bit); a classically correlated state gives 1 bit; a product state gives 0.
+// The quantum meaning-meter: entanglement carries correlation no classical state can hold.
+QmiResult quantum_mutual_information(const double rho[16]);
+
 }  // namespace gary
