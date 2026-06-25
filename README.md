@@ -28,9 +28,13 @@ Three measurable lenses on the one question:
   shared? (the *lingua cosmica* problem).
 - **Dynamical systems** — deterministic chaos that is *structured*, not random (strange
   attractors). "Chaos is not disorder."
+- **Cryptography & decipherment** — the *recoverability of meaning*: codes that **emerge**,
+  codes engineered to be **unbreakable** (classical + post-quantum), and codes we must
+  **break** (cryptanalysis). GARY deciphers — *decypher total*.
 
 The first genuine contact with a mind that shares no basis with us is, formally, the
-emergent-communication problem. GARY models it.
+emergent-communication problem. GARY models it. The same axis runs from an emergent signal
+to an unbreakable cipher: **how much meaning is recoverable, by whom, at what cost.**
 
 ## Three epistemic tiers (the firewall, in the open)
 

@@ -30,7 +30,7 @@ Constraints (from the owner):
 ## Decision
 
 GARY is built on **one measurable spine** — separating real structure from projected
-meaning — operationalised through three lenses that are facets of the same question:
+meaning — operationalised through four lenses that are facets of the same question:
 
 1. **Information theory.** Mutual information `I(state; signal)` as the *meaning-meter*
    (0 bits = no shared meaning, up to `log2(N)` = perfect code). Real correlation vs.
@@ -46,6 +46,16 @@ meaning — operationalised through three lenses that are facets of the same que
 3. **Dynamical systems.** Deterministic chaos that is *structured* — strange attractors,
    fractal order, sensitive dependence != randomness. The "order from chaos" question and
    the honest claim that **chaos is not disorder**.
+
+4. **Cryptography & decipherment — the recoverability of meaning.** GARY's through-line is
+   *deciphering* ("decypher total"). Codes that **emerge** (signaling games), codes engineered
+   to be **unrecoverable** (cryptography — classical and post-quantum where it fits, ML-KEM /
+   ML-DSA class), and codes we must **break** (cryptanalysis / decipherment — the inverse
+   problem) are one axis: *how much meaning is recoverable, by whom, at what cost.* Shannon
+   founded information theory and modern cryptography in the same work ("Communication Theory
+   of Secrecy Systems", 1949) — crypto is not a bolt-on, it is the spine seen as *hidden vs.
+   revealed meaning.* It is both **tool** (securing GARY's own artifacts and provenance, PQC
+   where warranted) and **object** (the science of recoverable vs. unrecoverable meaning).
 
 **Two substrate levels (the quantum / information axis).** The spine is realised at *both*
 levels — the owner's "separate quantum from mathematics" intuition done right: not two
@@ -76,7 +86,11 @@ measurement; CUDA / C++ kernels for the scale tiers (populations, batched Monte 
 neural agents, GPU quantum-information simulation). Not all-Python (the scale tiers need real
 kernels); not Rust (this is
 numerical / ML research — Python + CUDA is the honest fit; Rust is reserved for sovereign
-boundaries, which GARY does not have).
+boundaries, which GARY's *research core* does not have. **But the cryptography / post-quantum
+pillar IS a genuine security boundary** — and there **Rust earns its place** (the owner's
+standard: sovereign / PQC boundaries in Rust, ML-KEM / ML-DSA class). So GARY is Python + CUDA
+for the research core **plus** a Rust crypto / PQC boundary where confidentiality and
+provenance must hold.
 
 ## Options Considered
 
