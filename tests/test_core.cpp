@@ -6,6 +6,7 @@
 #include "gary/dark_forest.hpp"
 #include "gary/decipher.hpp"
 #include "gary/info_theory.hpp"
+#include "gary/quantum.hpp"
 #include "gary/signaling.hpp"
 
 static int g_fail = 0;
@@ -86,6 +87,15 @@ int main() {
     std::printf("   [lingua: ciphertext] accuracy = %.1f%%, MI = %.3f bits\n",
                 cph.accuracy * 100.0, cph.mi_bits);
     CHECK(cph.accuracy < 0.40, "lingua cosmica: ciphertext-only fails to ground meaning");
+  }
+
+  // Quantum: entanglement beats the classical CHSH bound; the classical strategy cannot.
+  {
+    const ChshResult q = chsh_game(500000, 99);
+    std::printf("   [CHSH] classical = %.4f, quantum = %.4f (Tsirelson %.4f)\n", q.classical_win,
+                q.quantum_win, q.tsirelson);
+    CHECK(q.classical_win <= 0.76, "CHSH classical strategy stays at/below 0.75 bound");
+    CHECK(q.quantum_win > 0.83, "CHSH quantum (entangled) beats the classical bound");
   }
 
   if (g_fail)
