@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <vector>
 
+#include "gary/chaos.hpp"
 #include "gary/dark_forest.hpp"
 #include "gary/decipher.hpp"
 #include "gary/info_theory.hpp"
@@ -109,6 +110,18 @@ int main() {
     std::printf("   [QMI] Bell = %.3f bits, product = %.3f bits\n", qb.qmi, qp.qmi);
     CHECK(std::fabs(qb.qmi - 2.0) < 1e-3, "QMI(Bell) = 2 bits (double the classical max)");
     CHECK(std::fabs(qp.qmi - 0.0) < 1e-3, "QMI(product) = 0 (the null)");
+  }
+
+  // Dynamical systems: the logistic map is chaotic at r=3.99, periodic at r=3.20; and a
+  // chaotic series has high consecutive MI (structure) while IID noise has ~0 (the null).
+  {
+    CHECK(lyapunov_exponent(3.99, 100000, 2000) > 0.0, "logistic r=3.99 is chaotic (lyapunov>0)");
+    CHECK(lyapunov_exponent(3.20, 100000, 2000) < 0.0, "logistic r=3.20 is periodic (lyapunov<0)");
+    const ChaosMi m = chaos_vs_random(3.99, 100000, 20, 3);
+    std::printf("   [chaos] consecutive MI: chaos=%.3f, random=%.3f bits\n", m.chaos_self_mi,
+                m.random_self_mi);
+    CHECK(m.chaos_self_mi > 1.0, "chaotic series has high consecutive MI (deterministic structure)");
+    CHECK(m.random_self_mi < 0.1, "IID series has ~0 consecutive MI (the null)");
   }
 
   if (g_fail)
