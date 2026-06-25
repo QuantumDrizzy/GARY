@@ -77,4 +77,28 @@ double SignalingGame::mutual_information_bits() const {
   return gary::mutual_information_bits(state_signal_joint(), n_states_, n_signals_);
 }
 
+std::vector<double> SignalingGame::sender_strategy() const {
+  std::vector<double> p(static_cast<size_t>(n_states_) * n_signals_);
+  for (int t = 0; t < n_states_; ++t) {
+    const double* w = &sender_w_[static_cast<size_t>(t) * n_signals_];
+    double sum = 0.0;
+    for (int s = 0; s < n_signals_; ++s) sum += w[s];
+    for (int s = 0; s < n_signals_; ++s)
+      p[static_cast<size_t>(t) * n_signals_ + s] = w[s] / sum;
+  }
+  return p;
+}
+
+std::vector<double> SignalingGame::receiver_strategy() const {
+  std::vector<double> p(static_cast<size_t>(n_signals_) * n_acts_);
+  for (int s = 0; s < n_signals_; ++s) {
+    const double* w = &receiver_w_[static_cast<size_t>(s) * n_acts_];
+    double sum = 0.0;
+    for (int a = 0; a < n_acts_; ++a) sum += w[a];
+    for (int a = 0; a < n_acts_; ++a)
+      p[static_cast<size_t>(s) * n_acts_ + a] = w[a] / sum;
+  }
+  return p;
+}
+
 }  // namespace gary

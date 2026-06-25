@@ -37,6 +37,10 @@ class SignalingGame {
   // Joint p(state, signal) (row-major n_states * n_signals) from the strategy.
   std::vector<double> state_signal_joint() const;
 
+  // Frozen strategies (row-normalised), for observation / decipherment (Phase 3).
+  std::vector<double> sender_strategy() const;    // p(signal | state),  [n_states  * n_signals]
+  std::vector<double> receiver_strategy() const;  // p(action | signal), [n_signals * n_states]
+
   int n_states() const noexcept { return n_states_; }
   int n_signals() const noexcept { return n_signals_; }
 

@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "gary/dark_forest.hpp"
+#include "gary/decipher.hpp"
 #include "gary/info_theory.hpp"
 #include "gary/signaling.hpp"
 
@@ -70,6 +71,21 @@ int main() {
     const DarkForestResult rh = gh.measure();
     std::printf("   [dark forest C=5] silence = %.1f%%\n", rh.silence_rate * 100.0);
     CHECK(rh.silence_rate > 0.66, "dark forest C=5 -> silence dominates");
+  }
+
+  // Lingua cosmica: a behavioural anchor grounds decipherment (accuracy high); ciphertext
+  // alone does not ground meaning (accuracy ~ chance) though structure (MI) is recovered.
+  {
+    const DecipherResult beh = lingua_cosmica(8, 20000, 20000, 0.05, Anchor::Behavior, 0.0, 5);
+    std::printf("   [lingua: behavior]   accuracy = %.1f%%, MI = %.3f bits\n",
+                beh.accuracy * 100.0, beh.mi_bits);
+    CHECK(beh.accuracy > 0.8, "lingua cosmica: behavior anchor deciphers (accuracy > 80%)");
+
+    const DecipherResult cph =
+        lingua_cosmica(8, 20000, 20000, 0.05, Anchor::CiphertextOnly, 0.0, 5);
+    std::printf("   [lingua: ciphertext] accuracy = %.1f%%, MI = %.3f bits\n",
+                cph.accuracy * 100.0, cph.mi_bits);
+    CHECK(cph.accuracy < 0.40, "lingua cosmica: ciphertext-only fails to ground meaning");
   }
 
   if (g_fail)
