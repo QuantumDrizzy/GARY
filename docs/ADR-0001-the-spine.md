@@ -47,6 +47,24 @@ meaning — operationalised through three lenses that are facets of the same que
    fractal order, sensitive dependence != randomness. The "order from chaos" question and
    the honest claim that **chaos is not disorder**.
 
+**Two substrate levels (the quantum / information axis).** The spine is realised at *both*
+levels — the owner's "separate quantum from mathematics" intuition done right: not two
+realities, but one structure realised on two substrates.
+- *Classical:* Shannon mutual information, classical signaling games, classical chaos.
+- *Quantum:* quantum mutual information / von Neumann entropy, **quantum games**
+  (Eisert–Wilkens–Lewenstein, 1999), quantum chaos. **Simulated** quantum information on the
+  GPU (state-vector / tensor-network) — *not* a QPU, and explicitly *not* "quantum
+  mysticism": quantum-information + quantum-game-theory only.
+
+Quantum is **first-class in the design, earned in the build**: sequenced *after* the classical
+spine proves out — same discipline as "GPU where it earns it", never forced into Phase 0.
+
+**AI is the learner, not a garnish.** The agents that evolve the codes climb a ladder:
+Skyrms reinforcement → neural deep-RL agents (emergent communication) → (later) agents on the
+quantum substrate. AI is *who plays the games*. (Honest footnote: an LLM is a hyper-human
+mirror, not an alien — the truly alien mind shares no basis with us, which is exactly what
+these agents model.)
+
 **Epistemic hygiene — three tiers (the firewall, in the open).** Every statement carries a
 tier: **science** (measured, with nulls + falsifiers; claims allowed) / **open** (plausible,
 unresolved — panspermia, Fermi; hypotheses only) / **inspiration** (myth, fiction, wonder;
@@ -55,7 +73,8 @@ principle; no universe-made-for-us).
 
 **Stack — polyglot by domain.** Python for orchestration, ML, and information-theoretic
 measurement; CUDA / C++ kernels for the scale tiers (populations, batched Monte Carlo,
-neural agents). Not all-Python (the scale tiers need real kernels); not Rust (this is
+neural agents, GPU quantum-information simulation). Not all-Python (the scale tiers need real
+kernels); not Rust (this is
 numerical / ML research — Python + CUDA is the honest fit; Rust is reserved for sovereign
 boundaries, which GARY does not have).
 
@@ -143,8 +162,11 @@ Each of these is a tripwire to be wired *before* the corresponding feature.
 
 ## Name
 
-`GARY` — chosen by the owner. Recorded resonance: **Gary McKinnon**, who broke into US
-military / NASA systems hunting for the hidden truth about non-terrestrial craft and found
-only ambiguous logs and a prosecution. GARY does that hunt *correctly*: it goes looking for
-real structure vs. projected meaning **with the firewall on**. (Confirm or replace this note
-with the owner's intended etymology.)
+**G.A.R.Y.** — a backronym. The project is a *system*, not a person (explicitly **not** Gary
+McKinnon). Working expansion (pending the owner's final pick):
+
+> **G**rounded · **A**pophenia-**R**esistant · **Y**ardstick
+> — an honest instrument that refuses to read patterns that are not there.
+
+The name carries the thesis (the firewall as a meter). Quantum and AI live in the
+architecture, not in the four letters.

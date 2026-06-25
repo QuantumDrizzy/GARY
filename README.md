@@ -53,4 +53,5 @@ never as decoration.
 
 ## The name
 
-`GARY` — see [ADR-0001 §Name](docs/ADR-0001-the-spine.md#name).
+`G.A.R.Y.` — a backronym (a *system*, not a person). See
+[ADR-0001 §Name](docs/ADR-0001-the-spine.md#name).
