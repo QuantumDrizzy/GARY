@@ -81,7 +81,9 @@ unresolved — panspermia, Fermi; hypotheses only) / **inspiration** (myth, fict
 fuel only, never cited as evidence). Default stance: **mechanism, not mission** (mediocrity
 principle; no universe-made-for-us).
 
-**Stack — polyglot by domain.** Python for orchestration, ML, and information-theoretic
+**Stack — polyglot by domain.** *(Superseded by [ADR-0002](ADR-0002-cpp-first-stack.md) —
+**C/C++-first**, portable core + optional CUDA/Blackwell + Raspberry-capable; kept below for
+history.)* Python for orchestration, ML, and information-theoretic
 measurement; CUDA / C++ kernels for the scale tiers (populations, batched Monte Carlo,
 neural agents, GPU quantum-information simulation). Not all-Python (the scale tiers need real
 kernels); not Rust (this is
