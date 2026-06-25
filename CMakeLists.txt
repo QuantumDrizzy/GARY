@@ -19,6 +19,8 @@ endif()
 # ── Portable core library (CPU, Pi-capable) ──────────────────────────────────
 add_library(gary_core STATIC
   src/core/version.cpp
+  src/core/info_theory.cpp
+  src/core/signaling.cpp
 )
 target_include_directories(gary_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_features(gary_core PUBLIC cxx_std_17)
