@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <vector>
 
+#include "gary/dark_forest.hpp"
 #include "gary/info_theory.hpp"
 #include "gary/signaling.hpp"
 
@@ -53,6 +54,22 @@ int main() {
                 std::log2(4.0));
     CHECK(mi > 0.5 * std::log2(4.0), "trained MI > half of a perfect code");
     CHECK(sr > 0.5, "trained success > 50%");
+  }
+
+  // Dark forest: no cost recovers communication; a huge cost forces silence.
+  {
+    DarkForestGame g0(8, 8, 1.0, 0.0, 1.0, 3, 0.1);
+    g0.run(20000);
+    const DarkForestResult r0 = g0.measure();
+    std::printf("   [dark forest C=0] silence = %.1f%%, MI = %.3f bits\n", r0.silence_rate * 100.0,
+                r0.mi_bits);
+    CHECK(r0.silence_rate < 0.34, "dark forest C=0 -> communication (low silence)");
+
+    DarkForestGame gh(8, 8, 1.0, 5.0, 1.0, 3, 0.1);
+    gh.run(20000);
+    const DarkForestResult rh = gh.measure();
+    std::printf("   [dark forest C=5] silence = %.1f%%\n", rh.silence_rate * 100.0);
+    CHECK(rh.silence_rate > 0.66, "dark forest C=5 -> silence dominates");
   }
 
   if (g_fail)
