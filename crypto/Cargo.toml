@@ -6,3 +6,6 @@ description = "GARY Phase 5 - the recoverability boundary (decypher total). Rese
 
 [profile.release]
 opt-level = 3
+
+[dependencies]
+fips204 = "0.4.6"

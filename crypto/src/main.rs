@@ -24,5 +24,19 @@ fn main() {
     println!("\nthe boundary: cribs recover a substitution code (-> ~100%) but NOT a keyed one");
     println!("(it stays at chance ~6.25%). WITH the key the keyed code decodes perfectly -- its");
     println!("resistance is real secrecy, not garbled data. That gap is 'decypher total'.");
-    println!("\n[research models, not production crypto; real PQC pillar = ML-DSA signing, next]");
+    println!("\n[the keyed stream above is a research stand-in, not production crypto]");
+
+    // ── PQC provenance: sign a real GARY result artifact with ML-DSA (vetted crate) ──
+    println!("\n--- PQC provenance (ML-DSA-65 / FIPS-204, vetted crate `fips204`) ---");
+    let art = b"GARY results: perfect-code MI=3.000, CHSH=0.8536, QMI(Bell)=2.0";
+    match gary_crypto::pqc_sign_artifact(art) {
+        Ok(d) => {
+            println!("  signed a {}-byte artifact -> {}-byte ML-DSA signature", art.len(), d.sig_len);
+            println!("  genuine signature verifies   : {}", d.valid_ok);
+            println!("  tampered artifact rejected   : {}", !d.tampered_msg_ok);
+            println!("  tampered signature rejected  : {}", !d.tampered_sig_ok);
+            println!("  -> GARY results carry post-quantum provenance (signed, tamper-evident).");
+        }
+        Err(e) => println!("  PQC error: {}", e),
+    }
 }

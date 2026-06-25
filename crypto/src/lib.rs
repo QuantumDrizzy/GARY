@@ -16,6 +16,9 @@
 
 use std::collections::HashMap;
 
+use fips204::ml_dsa_65;
+use fips204::traits::{Signer, Verifier};
+
 fn splitmix64(x: u64) -> u64 {
     let mut z = x.wrapping_add(0x9E3779B97F4A7C15);
     z = (z ^ (z >> 30)).wrapping_mul(0xBF58476D1CE4E5B9);
@@ -157,6 +160,43 @@ pub fn cryptanalysis(
     }
 }
 
+/// Result of signing a GARY artifact with ML-DSA (FIPS-204): the genuine signature must
+/// verify, and any tampering of the artifact or the signature must be rejected.
+pub struct PqcDemo {
+    pub valid_ok: bool,
+    pub tampered_msg_ok: bool,
+    pub tampered_sig_ok: bool,
+    pub sig_len: usize,
+}
+
+/// Sign a GARY result artifact with ML-DSA-65 and check its provenance guarantees. A
+/// post-quantum signature makes published results integrity-checkable and tamper-evident.
+pub fn pqc_sign_artifact(artifact: &[u8]) -> Result<PqcDemo, &'static str> {
+    let (pk, sk) = ml_dsa_65::try_keygen()?;
+    let ctx = b"GARY/result/v1";
+    let sig = sk.try_sign(artifact, ctx)?;
+    let valid_ok = pk.verify(artifact, &sig, ctx);
+
+    // Falsifier 1: a tampered artifact must NOT verify under the genuine signature.
+    let mut bad_msg = artifact.to_vec();
+    if let Some(b) = bad_msg.first_mut() {
+        *b ^= 0x01;
+    }
+    let tampered_msg_ok = pk.verify(&bad_msg, &sig, ctx);
+
+    // Falsifier 2: a tampered signature must NOT verify.
+    let mut bad_sig = sig;
+    bad_sig[0] ^= 0x01;
+    let tampered_sig_ok = pk.verify(artifact, &bad_sig, ctx);
+
+    Ok(PqcDemo {
+        valid_ok,
+        tampered_msg_ok,
+        tampered_sig_ok,
+        sig_len: sig.len(),
+    })
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -167,5 +207,14 @@ mod tests {
         assert!(r.substitution_acc > 0.8, "substitution recovered from cribs");
         assert!(r.keyed_acc < 0.15, "keyed stays near chance (1/16) without the key");
         assert!(r.keyed_with_key_acc > 0.99, "keyed decodes perfectly with the key");
+    }
+
+    #[test]
+    fn pqc_signs_and_rejects_tampering() {
+        let art = b"GARY results: MI=3.000, CHSH=0.8536, QMI(Bell)=2.0";
+        let d = pqc_sign_artifact(art).expect("keygen/sign");
+        assert!(d.valid_ok, "genuine signature verifies");
+        assert!(!d.tampered_msg_ok, "tampered artifact rejected");
+        assert!(!d.tampered_sig_ok, "tampered signature rejected");
     }
 }
