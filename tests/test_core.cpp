@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <vector>
 
+#include "gary/bifurcation.hpp"
 #include "gary/chaos.hpp"
 #include "gary/dark_forest.hpp"
 #include "gary/decipher.hpp"
@@ -134,6 +135,18 @@ int main() {
                 comp.final_topo_sim, holi.final_topo_sim);
     CHECK(comp.final_topo_sim > 0.7, "compositional learner: grammar emerges (topo-sim > 0.7)");
     CHECK(holi.final_topo_sim < 0.4, "holistic control: no compositional structure emerges");
+  }
+
+  // Order from chaos: the logistic map's period doubles (2, 4, ...) and the Feigenbaum constant
+  // emerges from the cascade (true value ~4.669).
+  {
+    CHECK(attractor_period(3.20, 64, 20000, 1024, 1e-4) == 2, "logistic r=3.20 has period 2");
+    CHECK(attractor_period(3.50, 64, 20000, 1024, 1e-4) == 4, "logistic r=3.50 has period 4");
+    const BifurcationResult bc = feigenbaum_cascade(2.90, 3.5695, 0.00005);
+    std::printf("   [feigenbaum] %zu doublings, delta = %.3f (true 4.669)\n",
+                bc.doubling_points.size(), bc.feigenbaum_delta);
+    CHECK(bc.feigenbaum_delta > 4.3 && bc.feigenbaum_delta < 5.0,
+          "Feigenbaum constant estimated near 4.669 from the cascade");
   }
 
   if (g_fail)
