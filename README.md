@@ -78,3 +78,7 @@ Design: [`docs/ADR-0001`](docs/ADR-0001-the-spine.md) (the spine) · [`docs/ADR-
 ## The name
 
 `G.A.R.Y.` — a backronym; a *system*, not a person. **A Decypher System.**
+
+## License
+
+MIT © QuantumDrizzy — see [LICENSE](LICENSE). The bundled `fips204` crate is MIT OR Apache-2.0.
