@@ -21,8 +21,13 @@ struct NeuralComposeResult {
 // maps the message back to the n_features feature values. Both are trained by REINFORCE on the
 // per-feature reconstruction reward. Measures full-meaning success and the topographic
 // similarity of the emergent code (0 = holistic, 1 = perfectly compositional).
+// `holistic_input`: if false (default) the sender sees a feature-structured input (one one-hot
+// block per feature) — a compositional inductive bias. If true the sender sees the meaning as a
+// single atomic one-hot (no feature structure). Comparing the two disentangles how much of the
+// emergent compositionality comes from the architecture vs the communication pressure.
 NeuralComposeResult neural_compositionality(int n_features, int n_values, int n_symbols,
                                             int hidden, int rounds, int checkpoints,
-                                            double learning_rate, std::uint64_t seed);
+                                            double learning_rate, std::uint64_t seed,
+                                            bool holistic_input = false);
 
 }  // namespace gary

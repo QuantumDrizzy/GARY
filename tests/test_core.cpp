@@ -196,6 +196,18 @@ int main() {
     CHECK(r.final_topo_sim > -1.01 && r.final_topo_sim < 1.01, "topographic similarity is in range");
   }
 
+  // Disentangling compositionality: under identical training, a feature-structured input yields
+  // a more compositional code than a holistic input -- the architecture (not pressure alone)
+  // was driving Phase 12's compositionality.
+  {
+    const NeuralComposeResult st = neural_compositionality(2, 5, 5, 64, 400000, 8, 0.05, 7, false);
+    const NeuralComposeResult ho = neural_compositionality(2, 5, 5, 64, 400000, 8, 0.05, 7, true);
+    std::printf("   [disentangle] structured topo-sim = %.3f, holistic = %.3f\n", st.final_topo_sim,
+                ho.final_topo_sim);
+    CHECK(st.final_topo_sim > ho.final_topo_sim,
+          "structured input is more compositional than holistic (architecture helps)");
+  }
+
   if (g_fail)
     std::printf("\n%d test(s) FAILED\n", g_fail);
   else

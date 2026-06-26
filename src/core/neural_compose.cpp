@@ -140,17 +140,29 @@ double topo_sim(const std::vector<std::vector<int>>& msg, int n_features, int n_
 
 NeuralComposeResult neural_compositionality(int n_features, int n_values, int n_symbols,
                                             int hidden, int rounds, int checkpoints,
-                                            double learning_rate, std::uint64_t seed) {
+                                            double learning_rate, std::uint64_t seed,
+                                            bool holistic_input) {
   std::mt19937_64 rng(seed);
   const int M = static_cast<int>(std::pow(n_values, n_features) + 0.5);
   std::uniform_int_distribution<int> meaning(0, M - 1);
 
+  const int sender_in = holistic_input ? M : n_features * n_values;
   MultiHeadMLP sender, receiver;
-  sender.init(n_features * n_values, hidden, n_features, n_symbols, rng);    // meaning -> message
+  sender.init(sender_in, hidden, n_features, n_symbols, rng);                // meaning -> message
   receiver.init(n_features * n_symbols, hidden, n_features, n_values, rng);  // message -> features
 
-  std::vector<double> sin(n_features * n_values), rin(n_features * n_symbols);
+  std::vector<double> sin(sender_in), rin(n_features * n_symbols);
   std::vector<int> msg, pred;
+
+  // The sender's view of a meaning: structured (per-feature one-hots) or holistic (atomic one-hot).
+  auto set_sender_input = [&](int meaning_idx, const std::vector<int>& f) {
+    std::fill(sin.begin(), sin.end(), 0.0);
+    if (holistic_input) {
+      sin[meaning_idx] = 1.0;
+    } else {
+      for (int p = 0; p < n_features; ++p) sin[static_cast<size_t>(p) * n_values + f[p]] = 1.0;
+    }
+  };
 
   NeuralComposeResult res;
   int block = rounds / std::max(1, checkpoints);
@@ -162,7 +174,7 @@ NeuralComposeResult neural_compositionality(int n_features, int n_values, int n_
     const int m = meaning(rng);
     const std::vector<int> feats = decode(m, n_features, n_values);
 
-    encode_onehot(feats, n_values, sin);
+    set_sender_input(m, feats);
     sender.forward(sin);
     sender.sample(rng, msg);
 
@@ -187,7 +199,7 @@ NeuralComposeResult neural_compositionality(int n_features, int n_values, int n_
       std::vector<std::vector<int>> code(M, std::vector<int>(n_features));
       for (int mm = 0; mm < M; ++mm) {
         const std::vector<int> f = decode(mm, n_features, n_values);
-        encode_onehot(f, n_values, sin);
+        set_sender_input(mm, f);
         sender.forward(sin);
         for (int p = 0; p < n_features; ++p) code[mm][p] = sender.argmax_head(p);
       }

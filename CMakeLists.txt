@@ -87,6 +87,9 @@ target_link_libraries(gary_neural PRIVATE gary_core)
 add_executable(gary_ncompose apps/gary_ncompose.cpp)
 target_link_libraries(gary_ncompose PRIVATE gary_core)
 
+add_executable(gary_disentangle apps/gary_disentangle.cpp)
+target_link_libraries(gary_disentangle PRIVATE gary_core)
+
 # ── Tests (optional) ─────────────────────────────────────────────────────────
 if(GARY_BUILD_TESTS)
   enable_testing()
