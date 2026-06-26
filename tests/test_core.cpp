@@ -7,6 +7,7 @@
 #include "gary/chaos.hpp"
 #include "gary/dark_forest.hpp"
 #include "gary/decipher.hpp"
+#include "gary/henon.hpp"
 #include "gary/info_theory.hpp"
 #include "gary/iterated.hpp"
 #include "gary/quantum.hpp"
@@ -160,6 +161,17 @@ int main() {
     CHECK(q.final_win_rate > 0.78, "quantum learner beats the classical 0.75 bound");
     CHECK(q.final_win_rate <= q.tsirelson + 1e-6, "quantum learner stays at/below Tsirelson");
     CHECK(c.final_win_rate <= 0.76, "classical learner cannot exceed 0.75");
+  }
+
+  // Henon strange attractor: chaotic (positive Lyapunov) yet a fractal of non-integer
+  // correlation dimension ~1.22 -- structure inside the chaos.
+  {
+    const HenonResult h = henon_attractor(1.4, 0.3, 3000, 1);
+    std::printf("   [henon] lyapunov = %.3f, correlation dimension = %.3f\n", h.lyapunov,
+                h.correlation_dimension);
+    CHECK(h.lyapunov > 0.0, "Henon map is chaotic (positive Lyapunov)");
+    CHECK(h.correlation_dimension > 1.0 && h.correlation_dimension < 1.5,
+          "Henon attractor has fractal dimension ~1.22");
   }
 
   if (g_fail)
