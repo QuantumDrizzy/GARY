@@ -208,6 +208,16 @@ int main() {
           "structured input is more compositional than holistic (architecture helps)");
   }
 
+  // Neural iterated learning: with a holistic input (no architectural bias), a transmission
+  // bottleneck recovers compositionality over generations (topo-sim rises from the random start).
+  {
+    const NeuralIteratedResult r = neural_iterated_learning(2, 5, 5, 32, 12, 30, 100, 20000, 0.05, 7);
+    std::printf("   [neural-iterated] initial topo-sim = %.3f, final = %.3f\n", r.initial_topo_sim,
+                r.final_topo_sim);
+    CHECK(r.final_topo_sim > 0.1,
+          "two pressures (bottleneck + expressivity) avoid the degenerate collapse to topo-sim 0");
+  }
+
   if (g_fail)
     std::printf("\n%d test(s) FAILED\n", g_fail);
   else

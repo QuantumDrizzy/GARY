@@ -30,4 +30,22 @@ NeuralComposeResult neural_compositionality(int n_features, int n_values, int n_
                                             double learning_rate, std::uint64_t seed,
                                             bool holistic_input = false);
 
+struct NeuralIteratedResult {
+  std::vector<double> topo_sim;  // topographic similarity per generation
+  double initial_topo_sim;       // generation 0 (a random language)
+  double final_topo_sim;
+};
+
+// Neural iterated learning (Kirby / Ren et al.) with BOTH pressures. Each generation: (1) a
+// LEARNING phase — the new sender imitates the previous generation's language on a BOTTLENECK
+// subset of meanings (compressibility/learnability pressure); then (2) an INTERACTION phase —
+// the sender plays the referential game with a fresh receiver, trained by REINFORCE
+// (expressivity pressure). The sender uses a HOLISTIC input (no architectural bias, cf. Phase
+// 13). A bottleneck ALONE collapses to a degenerate constant language (topo-sim 0); only the
+// COMBINATION of compressibility + expressivity yields compositionality. Does it emerge?
+NeuralIteratedResult neural_iterated_learning(int n_features, int n_values, int n_symbols,
+                                              int hidden, int bottleneck, int generations,
+                                              int epochs, int interact_rounds,
+                                              double learning_rate, std::uint64_t seed);
+
 }  // namespace gary

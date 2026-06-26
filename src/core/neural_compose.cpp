@@ -214,4 +214,84 @@ NeuralComposeResult neural_compositionality(int n_features, int n_values, int n_
   return res;
 }
 
+NeuralIteratedResult neural_iterated_learning(int n_features, int n_values, int n_symbols,
+                                              int hidden, int bottleneck, int generations,
+                                              int epochs, int interact_rounds,
+                                              double learning_rate, std::uint64_t seed) {
+  std::mt19937_64 rng(seed);
+  const int M = static_cast<int>(std::pow(n_values, n_features) + 0.5);
+  std::uniform_int_distribution<int> meaning(0, M - 1);
+
+  std::vector<double> in(M, 0.0);  // holistic input: one-hot over meanings (no feature structure)
+  std::vector<double> rin(static_cast<size_t>(n_features) * n_symbols);
+  auto onehot = [&](int m) { std::fill(in.begin(), in.end(), 0.0); in[m] = 1.0; };
+
+  auto greedy_language = [&](MultiHeadMLP& mlp) {
+    std::vector<std::vector<int>> lang(M, std::vector<int>(n_features));
+    for (int m = 0; m < M; ++m) {
+      onehot(m);
+      mlp.forward(in);
+      for (int p = 0; p < n_features; ++p) lang[m][p] = mlp.argmax_head(p);
+    }
+    return lang;
+  };
+
+  MultiHeadMLP teacher;
+  teacher.init(M, hidden, n_features, n_symbols, rng);
+
+  NeuralIteratedResult res;
+  res.initial_topo_sim = topo_sim(greedy_language(teacher), n_features, n_values);
+  res.topo_sim.push_back(res.initial_topo_sim);
+
+  std::vector<int> msg, pred;
+  for (int g = 0; g < generations; ++g) {
+    const std::vector<std::vector<int>> teach_lang = greedy_language(teacher);
+
+    std::vector<char> seen(M, 0);
+    for (int b = 0; b < bottleneck; ++b) seen[meaning(rng)] = 1;
+    std::vector<int> bottleneck_set;
+    for (int m = 0; m < M; ++m) if (seen[m]) bottleneck_set.push_back(m);
+
+    MultiHeadMLP student;
+    student.init(M, hidden, n_features, n_symbols, rng);
+
+    // (1) LEARNING phase: imitate the teacher's messages on the bottleneck (compressibility).
+    for (int e = 0; e < epochs; ++e)
+      for (int m : bottleneck_set) {
+        onehot(m);
+        student.forward(in);
+        student.reinforce(in, teach_lang[m], 1.0, learning_rate);
+      }
+
+    // (2) INTERACTION phase: the student communicates with a fresh receiver, by REINFORCE
+    //     (expressivity pressure — a degenerate language fails the game and is pushed away).
+    MultiHeadMLP receiver;
+    receiver.init(n_features * n_symbols, hidden, n_features, n_values, rng);
+    double baseline = 0.0;
+    for (int t = 0; t < interact_rounds; ++t) {
+      const int m = meaning(rng);
+      const std::vector<int> feats = decode(m, n_features, n_values);
+      onehot(m);
+      student.forward(in);
+      student.sample(rng, msg);
+      encode_onehot(msg, n_symbols, rin);
+      receiver.forward(rin);
+      receiver.sample(rng, pred);
+      int correct = 0;
+      for (int p = 0; p < n_features; ++p) correct += (pred[p] == feats[p]) ? 1 : 0;
+      const double reward = static_cast<double>(correct) / n_features;
+      const double adv = reward - baseline;
+      student.reinforce(in, msg, adv, learning_rate);
+      receiver.reinforce(rin, pred, adv, learning_rate);
+      baseline += 0.001 * (reward - baseline);
+    }
+
+    teacher = student;  // next generation
+    res.topo_sim.push_back(topo_sim(greedy_language(teacher), n_features, n_values));
+  }
+
+  res.final_topo_sim = res.topo_sim.back();
+  return res;
+}
+
 }  // namespace gary
