@@ -10,6 +10,7 @@
 #include "gary/info_theory.hpp"
 #include "gary/iterated.hpp"
 #include "gary/quantum.hpp"
+#include "gary/quantum_learning.hpp"
 #include "gary/signaling.hpp"
 
 static int g_fail = 0;
@@ -147,6 +148,18 @@ int main() {
                 bc.doubling_points.size(), bc.feigenbaum_delta);
     CHECK(bc.feigenbaum_delta > 4.3 && bc.feigenbaum_delta < 5.0,
           "Feigenbaum constant estimated near 4.669 from the cascade");
+  }
+
+  // Quantum learning: a quantum-equipped learner beats the classical CHSH bound; a classical
+  // learner cannot; neither exceeds the Tsirelson bound (the quantum sim stays physical).
+  {
+    const LearningChshResult q = learn_chsh(true, 8, 300000, 10, 0.1, 0.01, 7);
+    const LearningChshResult c = learn_chsh(false, 8, 300000, 10, 0.1, 0.01, 7);
+    std::printf("   [q-learning] quantum learned = %.3f, classical = %.3f\n", q.final_win_rate,
+                c.final_win_rate);
+    CHECK(q.final_win_rate > 0.78, "quantum learner beats the classical 0.75 bound");
+    CHECK(q.final_win_rate <= q.tsirelson + 1e-6, "quantum learner stays at/below Tsirelson");
+    CHECK(c.final_win_rate <= 0.76, "classical learner cannot exceed 0.75");
   }
 
   if (g_fail)

@@ -28,6 +28,7 @@ add_library(gary_core STATIC
   src/core/chaos.cpp
   src/core/iterated.cpp
   src/core/bifurcation.cpp
+  src/core/quantum_learning.cpp
 )
 target_include_directories(gary_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_features(gary_core PUBLIC cxx_std_17)
@@ -70,6 +71,9 @@ target_link_libraries(gary_compose PRIVATE gary_core)
 
 add_executable(gary_bifurcation apps/gary_bifurcation.cpp)
 target_link_libraries(gary_bifurcation PRIVATE gary_core)
+
+add_executable(gary_qlearn apps/gary_qlearn.cpp)
+target_link_libraries(gary_qlearn PRIVATE gary_core)
 
 # ── Tests (optional) ─────────────────────────────────────────────────────────
 if(GARY_BUILD_TESTS)
