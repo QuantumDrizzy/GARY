@@ -10,6 +10,7 @@
 #include "gary/henon.hpp"
 #include "gary/info_theory.hpp"
 #include "gary/iterated.hpp"
+#include "gary/neural.hpp"
 #include "gary/quantum.hpp"
 #include "gary/quantum_learning.hpp"
 #include "gary/signaling.hpp"
@@ -172,6 +173,16 @@ int main() {
     CHECK(h.lyapunov > 0.0, "Henon map is chaotic (positive Lyapunov)");
     CHECK(h.correlation_dimension > 1.0 && h.correlation_dimension < 1.5,
           "Henon attractor has fractal dimension ~1.22");
+  }
+
+  // Neural emergent communication: two from-scratch MLPs trained by REINFORCE grow a shared
+  // code (MI and success rise well above chance) -- the spine carries from tables to networks.
+  {
+    const NeuralCommResult r = neural_emergent_comm(6, 6, 32, 400000, 10, 0.05, 7);
+    std::printf("   [neural] success = %.1f%%, MI = %.3f / %.3f bits\n", r.final_success * 100.0,
+                r.final_mi, r.max_mi);
+    CHECK(r.final_mi > 1.0, "neural agents grow shared information (MI > 1 bit)");
+    CHECK(r.final_success > 0.4, "neural receiver decodes well above chance");
   }
 
   if (g_fail)

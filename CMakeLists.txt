@@ -30,6 +30,7 @@ add_library(gary_core STATIC
   src/core/bifurcation.cpp
   src/core/quantum_learning.cpp
   src/core/henon.cpp
+  src/core/neural.cpp
 )
 target_include_directories(gary_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_features(gary_core PUBLIC cxx_std_17)
@@ -78,6 +79,9 @@ target_link_libraries(gary_qlearn PRIVATE gary_core)
 
 add_executable(gary_henon apps/gary_henon.cpp)
 target_link_libraries(gary_henon PRIVATE gary_core)
+
+add_executable(gary_neural apps/gary_neural.cpp)
+target_link_libraries(gary_neural PRIVATE gary_core)
 
 # ── Tests (optional) ─────────────────────────────────────────────────────────
 if(GARY_BUILD_TESTS)
