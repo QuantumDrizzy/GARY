@@ -7,6 +7,7 @@
 #include "gary/dark_forest.hpp"
 #include "gary/decipher.hpp"
 #include "gary/info_theory.hpp"
+#include "gary/iterated.hpp"
 #include "gary/quantum.hpp"
 #include "gary/signaling.hpp"
 
@@ -122,6 +123,17 @@ int main() {
                 m.random_self_mi);
     CHECK(m.chaos_self_mi > 1.0, "chaotic series has high consecutive MI (deterministic structure)");
     CHECK(m.random_self_mi < 0.1, "IID series has ~0 consecutive MI (the null)");
+  }
+
+  // Compositionality: a compositional learner makes grammar emerge (high topo-sim) under a
+  // bottleneck; a holistic learner does not (near chance). Structure is selected, not automatic.
+  {
+    const IteratedResult comp = iterated_learning(2, 6, 6, 14, 30, LearnerBias::Compositional, 11);
+    const IteratedResult holi = iterated_learning(2, 6, 6, 14, 30, LearnerBias::Holistic, 11);
+    std::printf("   [compositionality] compositional = %.3f, holistic = %.3f topo-sim\n",
+                comp.final_topo_sim, holi.final_topo_sim);
+    CHECK(comp.final_topo_sim > 0.7, "compositional learner: grammar emerges (topo-sim > 0.7)");
+    CHECK(holi.final_topo_sim < 0.4, "holistic control: no compositional structure emerges");
   }
 
   if (g_fail)
