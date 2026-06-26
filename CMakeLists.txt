@@ -93,6 +93,9 @@ target_link_libraries(gary_disentangle PRIVATE gary_core)
 add_executable(gary_niterate apps/gary_niterate.cpp)
 target_link_libraries(gary_niterate PRIVATE gary_core)
 
+add_executable(gary_ndarkforest apps/gary_ndarkforest.cpp)
+target_link_libraries(gary_ndarkforest PRIVATE gary_core)
+
 # ── Tests (optional) ─────────────────────────────────────────────────────────
 if(GARY_BUILD_TESTS)
   enable_testing()

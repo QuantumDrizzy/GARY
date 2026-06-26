@@ -218,6 +218,17 @@ int main() {
           "two pressures (bottleneck + expressivity) avoid the degenerate collapse to topo-sim 0");
   }
 
+  // Neural dark forest: with neural agents too, no cost -> communication, high cost -> silence.
+  // The dark-forest phase transition is not a tabular artefact.
+  {
+    const NeuralDarkForestResult lo = neural_dark_forest(6, 6, 1.0, 0.0, 1.0, 32, 200000, 0.05, 7);
+    const NeuralDarkForestResult hi = neural_dark_forest(6, 6, 1.0, 2.0, 1.0, 32, 200000, 0.05, 7);
+    std::printf("   [neural dark forest] C=0 silence = %.1f%%, C=2 silence = %.1f%%\n",
+                lo.silence_rate * 100.0, hi.silence_rate * 100.0);
+    CHECK(lo.silence_rate < 0.4, "neural dark forest C=0 -> communication (low silence)");
+    CHECK(hi.silence_rate > 0.6, "neural dark forest C=2 -> silence emerges");
+  }
+
   if (g_fail)
     std::printf("\n%d test(s) FAILED\n", g_fail);
   else

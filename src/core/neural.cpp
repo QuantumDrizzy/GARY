@@ -131,4 +131,71 @@ NeuralCommResult neural_emergent_comm(int n_states, int n_signals, int hidden, i
   return res;
 }
 
+NeuralDarkForestResult neural_dark_forest(int n_states, int n_signals, double benefit, double cost,
+                                          double p_detect, int hidden, int rounds,
+                                          double learning_rate, std::uint64_t seed) {
+  std::mt19937_64 rng(seed);
+  std::uniform_int_distribution<int> states(0, n_states - 1);
+  std::uniform_real_distribution<double> u01(0.0, 1.0);
+  const int SILENCE = n_signals;  // the last sender action
+
+  PolicyMLP sender, receiver;
+  sender.init(n_states, hidden, n_signals + 1, rng);  // state -> {signal_0..signal_{M-1}, SILENCE}
+  receiver.init(n_signals, hidden, n_states, rng);    // signal -> action
+
+  double base_s = 0.0, base_r = 0.0;
+  for (int it = 0; it < rounds; ++it) {
+    const int t = states(rng);
+    sender.forward(t);
+    const int o = sender.sample(rng);
+    if (o == SILENCE) {
+      const double reward = 0.0;  // safe, no information
+      sender.reinforce(t, o, reward - base_s, learning_rate);
+      base_s += 0.001 * (reward - base_s);
+    } else {
+      receiver.forward(o);
+      const int a = receiver.sample(rng);
+      const bool understood = (a == t);
+      const bool detected = (u01(rng) < p_detect);
+      const double reward_s = (understood ? benefit : 0.0) - (detected ? cost : 0.0);
+      const double reward_r = understood ? benefit : 0.0;  // receiver bears no cost
+      sender.reinforce(t, o, reward_s - base_s, learning_rate);
+      receiver.reinforce(o, a, reward_r - base_r, learning_rate);
+      base_s += 0.001 * (reward_s - base_s);
+      base_r += 0.001 * (reward_r - base_r);
+    }
+  }
+
+  // Measure from the learned policies.
+  const double pt = 1.0 / n_states;
+  double silence = 0.0, total_sig = 0.0;
+  std::vector<double> joint(static_cast<size_t>(n_states) * n_signals, 0.0);
+  for (int t = 0; t < n_states; ++t) {
+    sender.forward(t);
+    silence += pt * sender.probs[SILENCE];
+    for (int s = 0; s < n_signals; ++s) {
+      const double p = pt * sender.probs[s];
+      joint[static_cast<size_t>(t) * n_signals + s] = p;
+      total_sig += p;
+    }
+  }
+
+  NeuralDarkForestResult res;
+  res.silence_rate = silence;
+  if (total_sig < 1e-9) { res.mi_bits = 0.0; res.success = 0.0; return res; }
+
+  std::vector<double> cj(joint.size());
+  for (size_t i = 0; i < cj.size(); ++i) cj[i] = joint[i] / total_sig;
+  res.mi_bits = mutual_information_bits(cj, n_states, n_signals);
+
+  double succ = 0.0;
+  for (int s = 0; s < n_signals; ++s) {
+    receiver.forward(s);
+    for (int t = 0; t < n_states; ++t)
+      succ += joint[static_cast<size_t>(t) * n_signals + s] * receiver.probs[t];
+  }
+  res.success = succ / total_sig;
+  return res;
+}
+
 }  // namespace gary

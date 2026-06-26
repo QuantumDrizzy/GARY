@@ -23,4 +23,19 @@ struct NeuralCommResult {
 NeuralCommResult neural_emergent_comm(int n_states, int n_signals, int hidden, int rounds,
                                       int checkpoints, double learning_rate, std::uint64_t seed);
 
+struct NeuralDarkForestResult {
+  double silence_rate;  // P(sender stays silent), from the learned policy
+  double mi_bits;       // I(state; signal) among signaling rounds
+  double success;       // P(receiver identifies the state | a signal was sent)
+};
+
+// The dark forest (Phase 2) with NEURAL agents: an MLP sender (state -> a signal or SILENCE)
+// and an MLP receiver, trained by REINFORCE. Signaling is detected (probability p_detect) and
+// punished with a catastrophic cost C. Sweeping C, does silence emerge as the equilibrium as it
+// did with tabular agents? Returns the learned policy's silence rate, code MI, and success for
+// one cost C.
+NeuralDarkForestResult neural_dark_forest(int n_states, int n_signals, double benefit, double cost,
+                                          double p_detect, int hidden, int rounds,
+                                          double learning_rate, std::uint64_t seed);
+
 }  // namespace gary
