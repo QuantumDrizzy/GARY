@@ -69,9 +69,9 @@ cd crypto && cargo test && cargo run --release
 
 ## Epistemics
 
-Three tiers ([`docs/MANIFESTO.md`](docs/MANIFESTO.md)): **science** (measured) / **open**
-(plausible, unresolved) / **inspiration** (fuel only, never cited as evidence). Default stance:
-**mechanism, not mission.** A claim may move up a tier only by *measurement*, never by feeling.
+Every claim is tagged **science** (measured, with nulls + falsifiers) or **open** (plausible
+but unresolved, never asserted). Default stance: **mechanism, not narrative** — a claim moves
+up only by *measurement*, never by feeling.
 
 Design: [`docs/ADR-0001`](docs/ADR-0001-the-spine.md) (the spine) · [`docs/ADR-0002`](docs/ADR-0002-cpp-first-stack.md) (C/C++-first stack).
 

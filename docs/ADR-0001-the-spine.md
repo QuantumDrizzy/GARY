@@ -6,10 +6,9 @@
 
 ## Context
 
-The subject matter GARY lives in — contact, meaning, pattern, "the past", the alien
-question — is saturated with *projected* meaning: myth, teleology, out-of-place artifacts,
-adulterated data, confirmation bias, and wishful contact narratives that say more about us
-than about anything out there.
+GARY lives where *projected* meaning runs rampant — pattern, structure, and the records we
+read them from are saturated with false patterns, narrative, confirmation bias, and adulterated
+data that say more about the observer than about the signal.
 
 Underneath all of it sits one honest, well-posed question:
 
@@ -22,7 +21,7 @@ meaning.
 
 Constraints (from the owner):
 - **One repository**, unified by a single spine — not a junk drawer of "math + language +
-  vibration + patterns".
+  signals + patterns".
 - **GPU-native** (CUDA / Blackwell) *where scale earns it* — not as decoration.
 - **Engineering honesty is non-negotiable:** no inflation, no fake acceleration, nulls and
   falsifiers before claims.
@@ -34,14 +33,14 @@ meaning — operationalised through four lenses that are facets of the same ques
 
 1. **Information theory.** Mutual information `I(state; signal)` as the *meaning-meter*
    (0 bits = no shared meaning, up to `log2(N)` = perfect code). Real correlation vs.
-   apophenia via shuffled / null controls. The degraded historical record modelled as a
-   lossy channel (information decays; the past is low-SNR — thermodynamics of records).
+   apophenia via shuffled / null controls. A degraded record modelled as a lossy channel
+   (information decays; an old record is low-SNR — thermodynamics of records).
 
 2. **Emergent communication / game theory.** Lewis (1969) / Skyrms (2010) signaling games:
    meaning that *emerges from interaction* with nothing injected. The **Dark Forest** is
    the same game in the catastrophic-payoff regime (revealing your state is lethal →
-   silence as equilibrium → a game-theoretic answer to Fermi). The *lingua cosmica*
-   problem: can a third agent decode a code it never shared?
+   silence as equilibrium → a game-theoretic answer to the Fermi paradox). The *lingua
+   cosmica* problem: can a third agent decode a code it never shared?
 
 3. **Dynamical systems.** Deterministic chaos that is *structured* — strange attractors,
    fractal order, sensitive dependence != randomness. The "order from chaos" question and
@@ -58,8 +57,7 @@ meaning — operationalised through four lenses that are facets of the same ques
    where warranted) and **object** (the science of recoverable vs. unrecoverable meaning).
 
 **Two substrate levels (the quantum / information axis).** The spine is realised at *both*
-levels — the owner's "separate quantum from mathematics" intuition done right: not two
-realities, but one structure realised on two substrates.
+levels — not two realities, but one structure realised on two substrates.
 - *Classical:* Shannon mutual information, classical signaling games, classical chaos.
 - *Quantum:* quantum mutual information / von Neumann entropy, **quantum games**
   (Eisert–Wilkens–Lewenstein, 1999), quantum chaos. **Simulated** quantum information on the
@@ -72,14 +70,13 @@ spine proves out — same discipline as "GPU where it earns it", never forced in
 **AI is the learner, not a garnish.** The agents that evolve the codes climb a ladder:
 Skyrms reinforcement → neural deep-RL agents (emergent communication) → (later) agents on the
 quantum substrate. AI is *who plays the games*. (Honest footnote: an LLM is a hyper-human
-mirror, not an alien — the truly alien mind shares no basis with us, which is exactly what
-these agents model.)
+mirror — a compression of our own text; the harder case is a mind that shares no prior basis
+with us, which is exactly what these agents model.)
 
-**Epistemic hygiene — three tiers (the firewall, in the open).** Every statement carries a
-tier: **science** (measured, with nulls + falsifiers; claims allowed) / **open** (plausible,
-unresolved — panspermia, Fermi; hypotheses only) / **inspiration** (myth, fiction, wonder;
-fuel only, never cited as evidence). Default stance: **mechanism, not mission** (mediocrity
-principle; no universe-made-for-us).
+**Epistemic hygiene.** Every claim is tagged **science** (measured, with nulls + falsifiers;
+claims allowed) or **open** (plausible but unresolved; hypotheses only, never asserted).
+Default stance: **mechanism, not narrative** — nothing is asserted that has not survived a
+falsifier.
 
 **Stack — polyglot by domain.** *(Superseded by [ADR-0002](ADR-0002-cpp-first-stack.md) —
 **C/C++-first**, portable core + optional CUDA/Blackwell + Raspberry-capable; kept below for
@@ -122,15 +119,15 @@ be *code that measures*, not prose that asserts. **Rejected.**
 
 ## Trade-off Analysis
 
-- **Wonder vs. rigor.** The wonder is kept as *fuel* (inspiration tier) but only the
-  measured spine is "science". The topic's pull toward woo is countered by mandatory tier
-  tags and falsifiers — not by amputating the wonder.
+- **Motivation vs. rigor.** Speculative motivation is kept strictly separate from claims —
+  only the measured spine counts as "science". The pull toward over-reading is countered by
+  mandatory tier tags and falsifiers.
 - **GPU honesty.** Forcing the GPU onto the toy seed would be inflation. The GPU is placed
   exactly where scale demands it (populations, neural agents, batched runs) and the seed is
   openly CPU. "GPU-accelerated" is a claim GARY must *earn*, like any other.
-- **Breadth vs. focus.** "Vibration / patterns" (e.g. cymatics) is admitted only if it
-  earns a place on the spine (as a signal medium / a structured-vs-random testbed);
-  otherwise it stays in the inspiration tier. The spine is the gatekeeper.
+- **Breadth vs. focus.** A candidate facet is admitted only if it earns a place on the spine
+  (as a signal medium / a structured-vs-random testbed); otherwise it stays out of scope. The
+  spine is the gatekeeper.
 
 ## Consequences
 
@@ -140,7 +137,7 @@ be *code that measures*, not prose that asserts. **Rejected.**
   nulls / falsifiers *before* the satisfying "meaning emerged" plots.
 - **To revisit:** whether the neural / population tier needs hand-written CUDA or torch
   suffices; whether the dynamical-systems facet stays in GARY or bridges to an existing
-  substrate; whether GARY is ever made public (default: local).
+  substrate.
 
 ## Action Items — Build Sequence
 
@@ -155,7 +152,7 @@ Verification-first: for each phase, the null / falsifier is built *before* the r
    CUDA / Blackwell. Evolutionary dynamics of signaling; MI as an order parameter across a
    population. *Here Blackwell earns it.*
 3. **Phase 2 — Dark Forest (game theory, hard).** Costly signals, deception, catastrophic
-   payoffs. Does silence become the equilibrium? Tie to Fermi (open tier).
+   payoffs. Does silence become the equilibrium? Tie to the Fermi-paradox literature (open).
 4. **Phase 3 — Lingua cosmica / decipherment.** Can a third agent decode the emergent code?
    The inverse problem (signal <-> meaning).
 5. **Phase 4 — Neural agents.** Deep-RL emergent communication; test for *compositionality*
@@ -163,8 +160,8 @@ Verification-first: for each phase, the null / falsifier is built *before* the r
 6. **Phase 5 — Dynamical-systems facet.** Real structural order vs projected meaning,
    measured on a chaotic substrate (strange attractors).
 
-Cross-cutting: every result tagged science / open / inspiration; nulls + provenance + a
-held-out check before any emergence claim.
+Cross-cutting: every result tagged science / open; nulls + provenance + a held-out check
+before any emergence claim.
 
 ## Falsifiers (the honest core)
 
@@ -178,8 +175,8 @@ Each of these is a tripwire to be wired *before* the corresponding feature.
 
 ## Name
 
-**G.A.R.Y.** — a backronym. The project is a *system*, not a person (explicitly **not** Gary
-McKinnon). Working expansion (pending the owner's final pick):
+**G.A.R.Y.** — a backronym. The project is a *system*, not a person. Working expansion
+(pending the owner's final pick):
 
 > **G**rounded · **A**pophenia-**R**esistant · **Y**ardstick
 > — an honest instrument that refuses to read patterns that are not there.
