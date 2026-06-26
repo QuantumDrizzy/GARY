@@ -11,6 +11,7 @@
 #include "gary/info_theory.hpp"
 #include "gary/iterated.hpp"
 #include "gary/neural.hpp"
+#include "gary/neural_compose.hpp"
 #include "gary/quantum.hpp"
 #include "gary/quantum_learning.hpp"
 #include "gary/signaling.hpp"
@@ -183,6 +184,16 @@ int main() {
                 r.final_mi, r.max_mi);
     CHECK(r.final_mi > 1.0, "neural agents grow shared information (MI > 1 bit)");
     CHECK(r.final_success > 0.4, "neural receiver decodes well above chance");
+  }
+
+  // Neural compositionality: multi-head MLP agents learn to communicate composite meanings
+  // (success well above chance); topographic similarity measures how compositional the code is.
+  {
+    const NeuralComposeResult r = neural_compositionality(2, 5, 5, 64, 400000, 8, 0.05, 7);
+    std::printf("   [neural-compose] success = %.1f%%, topo-sim = %.3f\n", r.final_success * 100.0,
+                r.final_topo_sim);
+    CHECK(r.final_success > 0.4, "neural agents communicate composite meanings (success > 40%)");
+    CHECK(r.final_topo_sim > -1.01 && r.final_topo_sim < 1.01, "topographic similarity is in range");
   }
 
   if (g_fail)

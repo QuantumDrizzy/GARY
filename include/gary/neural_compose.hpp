@@ -1,0 +1,28 @@
+// GARY — Phase 12: neural compositionality. Do neural agents that learn to communicate about
+// composite meanings develop a COMPOSITIONAL code, or just a successful holistic one?
+// Joins Phase 7 (compositionality / topographic similarity) with Phase 11 (neural agents).
+// Portable core, no CUDA (Pi-capable).
+#pragma once
+
+#include <cstdint>
+#include <vector>
+
+namespace gary {
+
+struct NeuralComposeResult {
+  std::vector<double> success;   // full-meaning reconstruction rate per checkpoint
+  std::vector<double> topo_sim;  // topographic similarity (compositionality) per checkpoint
+  double final_success;
+  double final_topo_sim;
+};
+
+// A multi-head MLP sender maps a composite meaning (n_features features, each of n_values
+// values) to a message of n_features symbols (alphabet n_symbols); a multi-head MLP receiver
+// maps the message back to the n_features feature values. Both are trained by REINFORCE on the
+// per-feature reconstruction reward. Measures full-meaning success and the topographic
+// similarity of the emergent code (0 = holistic, 1 = perfectly compositional).
+NeuralComposeResult neural_compositionality(int n_features, int n_values, int n_symbols,
+                                            int hidden, int rounds, int checkpoints,
+                                            double learning_rate, std::uint64_t seed);
+
+}  // namespace gary
