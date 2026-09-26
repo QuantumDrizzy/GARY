@@ -31,5 +31,4 @@ checkpoints/
 *.pt
 *.safetensors
 
-# Private ideation fuel (inspiration tier) — not published
 docs/MANIFESTO.md

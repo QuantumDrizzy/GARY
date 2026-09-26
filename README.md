@@ -131,6 +131,11 @@ cd crypto && cargo test && cargo run --release
   learning below Tsirelson (9), and the weak neural compositionality (14) are reported as measured.
 - **GPU/quantum where they earn it:** the CUDA backend is optional; quantum is *simulated* and
   validated against known theoretical values (Tsirelson 0.8536, QMI 2 bits).
+- **Reproducible per toolchain, not across toolchains.** `std::normal_distribution` and
+  the other standard distributions are implementation-defined, so libstdc++ and MSVC draw
+  different streams from the same seed. The tables above come from the original build. With
+  MSVC (VS 2022, 2026-09-26), phases 12-14 read 0.701, 0.701 → 0.458 and 0.049 → 0.113. The
+  conclusions hold, and the digits do not travel.
 - **The keyed cipher in phase 5 is a research stand-in, not production crypto.** The PQC piece
   (ML-DSA signing) uses the vetted `fips204` crate.
 
