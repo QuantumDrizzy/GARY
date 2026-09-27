@@ -96,6 +96,9 @@ target_link_libraries(gary_niterate PRIVATE gary_core)
 add_executable(gary_ndarkforest apps/gary_ndarkforest.cpp)
 target_link_libraries(gary_ndarkforest PRIVATE gary_core)
 
+add_executable(gary_qublar_bits apps/gary_qublar_bits.cpp)
+target_link_libraries(gary_qublar_bits PRIVATE gary_core)
+
 # ── Tests (optional) ─────────────────────────────────────────────────────────
 if(GARY_BUILD_TESTS)
   enable_testing()
