@@ -33,6 +33,7 @@ if hasattr(sys.stderr, "reconfigure"):
 
 HERE = pathlib.Path(__file__).resolve()
 GARY_ROOT = HERE.parent.parent
+sys.path.insert(0, str(GARY_ROOT))
 BUILD_BIN = GARY_ROOT / "build" / "Release" / "gary_oracle.exe"
 
 
@@ -227,6 +228,9 @@ def main():
     # bench
     subparsers.add_parser("bench", help="Run core physical benchmarks across all 15 phases")
 
+    # sovereign (SDD + Graph + Mesh)
+    subparsers.add_parser("sovereign", help="Run 3-tier bare-metal & quantum orchestrator (SDD + Graph + Mesh)")
+
     args = parser.parse_args()
 
     if args.command == "inspect":
@@ -237,6 +241,9 @@ def main():
         cmd_decypher(args)
     elif args.command == "bench":
         cmd_bench(args)
+    elif args.command == "sovereign":
+        from sovereign.orchestrator import run_full_sovereign_suite
+        run_full_sovereign_suite()
 
 
 if __name__ == "__main__":

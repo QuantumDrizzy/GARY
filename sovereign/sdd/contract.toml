@@ -1,0 +1,43 @@
+# SDD (Spec-Driven Development) — Formal Hardware & Quantum Contract
+# Architecture target: NVIDIA Blackwell (sm_120) + Transmon/Neutral-Atom QPU
+
+[meta]
+spec_version = "1.0.0"
+target_architecture = "sm_120"
+compiler = "lyth-ptx"
+compliance_mode = "STRICT_PHYSICAL_INVARIANT"
+
+[cuda_contract]
+# Hong-Kung I/O lower bound: Q >= Omega(N / sqrt(M))
+# Operational intensity must exceed bandwidth saturation knee on RTX 5060 Ti
+min_arithmetic_intensity_flops_per_byte = 16.5
+
+# Register pressure limit: prevents spilling into L1/Local Memory
+max_registers_per_thread = 64
+
+# Shared memory bank conflict avoidance
+# On NVIDIA GPUs (32 banks), stride 33 guarantees conflict-free concurrent access
+required_shared_memory_stride = 33
+
+# Divergence constraint: zero intra-warp divergence on the hot matrix path
+allow_warp_divergence = false
+
+[quantum_contract]
+# Hardware coherence limit: T2* ~ 50 us on transmon architectures
+# Two-qubit gate operations must complete well within the coherence envelope
+max_2q_gate_depth = 14
+max_total_qubits = 16
+
+# Native physical gate basis (avoids noisy transpilations)
+allowed_native_gates = ["cz", "rz", "rx", "h"]
+
+# Coupling topology: 2-qubit gates must map directly to physical edges
+coupling_topology = "HEAVY_HEX_OR_GRID"
+coupling_edges = [
+    [0, 1], [1, 2], [2, 3],
+    [0, 4], [2, 5],
+    [4, 5], [5, 6], [6, 7]
+]
+
+# Minimum acceptable state fidelity (verified via MPS contraction)
+min_state_fidelity = 0.992
